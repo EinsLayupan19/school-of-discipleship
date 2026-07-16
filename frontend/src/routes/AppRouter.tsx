@@ -13,6 +13,8 @@ import AttendancePage from "@/pages/AttendancePage";
 import AttendanceSessionPage from "@/pages/AttendanceSessionPage";
 import ActivitiesPage from "@/pages/ActivitiesPage";
 import ActivityDetailPage from "@/pages/ActivityDetailPage";
+import PAPage from "@/pages/PAPage";
+import PADetailPage from "@/pages/PADetailPage";
 import UnauthorizedPage from "@/pages/UnauthorizedPage";
 import NotFoundPage from "@/pages/NotFoundPage";
 
@@ -57,6 +59,8 @@ const router = createBrowserRouter([
       { path: "/attendance/:id", element: <AttendanceSessionPage /> },
       { path: "/activities", element: <ActivitiesPage /> },
       { path: "/activities/:id", element: <ActivityDetailPage /> },
+      { path: "/pa", element: <PAPage /> },
+      { path: "/pa/:id", element: <PADetailPage /> },
     ],
   },
 
