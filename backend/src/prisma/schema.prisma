@@ -210,6 +210,7 @@ model Group {
   class      Class       @relation(fields: [classId], references: [id], onDelete: Cascade)
   students   Student[]
   groupChips GroupChip[]
+  paScores   PAScore[]
 
   @@index([classId])
   @@map("groups")
@@ -236,7 +237,6 @@ model Student {
 
   attendanceRecords AttendanceRecord[]
   activityScores    ActivityScore[]
-  paScores          PAScore[]
   demerits          Demerit[]
 
   @@index([classId])
@@ -370,13 +370,13 @@ model ActivityScore {
 /// Assessment style activities. Kept distinct from Activity/GradeCategory
 /// since PA scoring has its own rubric shape, not weighted-category based.
 model PAActivity {
-  id        String   @id @default(uuid())
-  title     String
-  maxScore  Decimal  @db.Decimal(6, 2)
-  classId   String
-  isLocked  Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(uuid())
+  classId     String
+  sessionDate DateTime
+  topic       String?
+  isLocked    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   class  Class     @relation(fields: [classId], references: [id], onDelete: Cascade)
   scores PAScore[]
@@ -385,20 +385,29 @@ model PAActivity {
   @@map("pa_activities")
 }
 
-/// A single student's score on a single PAActivity.
+/// A single Group's rubric-based Physical Arrangement score for one
+/// PAActivity session. Each criterion is entered 0-100; totalScore is the
+/// weighted sum using program-specific weights (MDC vs CC differ — see
+/// PA_RUBRIC_WEIGHTS in pa.service.ts), computed and stored server-side.
 model PAScore {
-  id           String   @id @default(uuid())
-  paActivityId String
-  studentId    String
-  score        Decimal  @db.Decimal(6, 2)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id             String  @id @default(uuid())
+  paActivityId   String
+  groupId        String
+  cleanliness    Decimal @db.Decimal(5, 2)
+  creativity     Decimal @db.Decimal(5, 2)
+  execution      Decimal @db.Decimal(5, 2)
+  teamwork       Decimal @db.Decimal(5, 2)
+  timeManagement Decimal @db.Decimal(5, 2)
+  totalScore     Decimal @db.Decimal(5, 2)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   paActivity PAActivity @relation(fields: [paActivityId], references: [id], onDelete: Cascade)
-  student    Student    @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  group      Group      @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
-  @@unique([paActivityId, studentId])
-  @@index([studentId])
+  @@unique([paActivityId, groupId])
+  @@index([groupId])
   @@map("pa_scores")
 }
 
