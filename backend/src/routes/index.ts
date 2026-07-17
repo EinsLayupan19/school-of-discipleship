@@ -9,6 +9,8 @@ import weekRoutes from "../modules/weeks/week.routes";
 import attendanceRoutes from "../modules/attendance/attendance.routes";
 import activityRoutes from "../modules/activities/activity.routes";
 import paRoutes from "../modules/pa/pa.routes";
+import notificationRoutes from "../modules/notifications/notification.routes";
+import announcementRoutes from "../modules/announcements/announcement.routes";
 
 /**
  * Root API router. Each module (users, auth, audit, etc.) will
@@ -27,5 +29,7 @@ router.use("/weeks", weekRoutes);
 router.use("/attendance", attendanceRoutes);
 router.use("/activities", activityRoutes);
 router.use("/pa", paRoutes);
+router.use("/notifications", notificationRoutes);
+router.use("/announcements", announcementRoutes);
 
 export default router;

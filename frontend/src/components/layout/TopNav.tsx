@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ThemeToggle } from "./ThemeToggle";
+import { NotificationBell } from "@/features/notifications/NotificationBell";
 import { useAuth } from "@/features/auth/AuthContext";
 
 interface TopNavProps {
@@ -47,6 +48,7 @@ export function TopNav({ onMenuClick, title }: TopNavProps) {
 
       <div className="flex items-center gap-2">
         <ThemeToggle />
+        <NotificationBell />
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
