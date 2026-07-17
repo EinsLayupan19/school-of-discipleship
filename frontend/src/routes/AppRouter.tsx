@@ -15,6 +15,7 @@ import ActivitiesPage from "@/pages/ActivitiesPage";
 import ActivityDetailPage from "@/pages/ActivityDetailPage";
 import PAPage from "@/pages/PAPage";
 import PADetailPage from "@/pages/PADetailPage";
+import AnalyticsPage from "@/pages/AnalyticsPage";
 import UnauthorizedPage from "@/pages/UnauthorizedPage";
 import NotFoundPage from "@/pages/NotFoundPage";
 
@@ -61,6 +62,7 @@ const router = createBrowserRouter([
       { path: "/activities/:id", element: <ActivityDetailPage /> },
       { path: "/pa", element: <PAPage /> },
       { path: "/pa/:id", element: <PADetailPage /> },
+      { path: "/analytics", element: <AnalyticsPage /> },
     ],
   },
 

@@ -9,6 +9,7 @@ import {
   ClipboardCheck,
   FileText,
   LayoutGrid,
+  BarChart3,
   X,
   type LucideIcon,
 } from "lucide-react";
@@ -33,6 +34,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Attendance", href: "/attendance", icon: ClipboardCheck },
   { label: "Activities", href: "/activities", icon: FileText },
   { label: "Physical Arrangement", href: "/pa", icon: LayoutGrid },
+  { label: "Analytics", href: "/analytics", icon: BarChart3 },
   { label: "Users", href: "/users", icon: Users, roles: ["SUPER_ADMIN"] },
   { label: "Audit Logs", href: "/audit-logs", icon: ScrollText, roles: ["SUPER_ADMIN"] },
   { label: "Settings", href: "/settings", icon: Settings, roles: ["SUPER_ADMIN"] },
