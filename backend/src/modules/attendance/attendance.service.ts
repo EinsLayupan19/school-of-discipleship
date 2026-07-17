@@ -1,6 +1,7 @@
 import { AttendanceStatus, Role } from "@prisma/client";
 import { attendanceRepository } from "./attendance.repository";
 import { createAuditLog } from "../audit/audit.service";
+import { notifyClassFacilitator } from "../notifications/notification.service";
 import { prisma } from "../../config/db";
 import { getFacilitatorClassIds } from "../../shared/utils/facilitatorScope";
 import { ForbiddenError, NotFoundError, ValidationError } from "../../shared/errors/AppError";
@@ -140,6 +141,14 @@ export const attendanceService = {
       entityType: "Attendance",
       entityId: id,
       metadata: { reason },
+    });
+
+    await notifyClassFacilitator(session.classId, actor.id, {
+      type: "UNLOCK",
+      title: "Attendance session unlocked",
+      message: `The ${new Date(session.sessionDate).toLocaleDateString()} attendance session was unlocked.`,
+      entityType: "Attendance",
+      entityId: id,
     });
 
     return unlocked;

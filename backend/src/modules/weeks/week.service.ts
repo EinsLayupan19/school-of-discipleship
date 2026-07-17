@@ -1,6 +1,7 @@
 import { Role, WeekStatus } from "@prisma/client";
 import { weekRepository } from "./week.repository";
 import { createAuditLog } from "../audit/audit.service";
+import { notifyBatchFacilitators } from "../notifications/notification.service";
 import { prisma } from "../../config/db";
 import { getFacilitatorBatchIds } from "../../shared/utils/facilitatorScope";
 import { ForbiddenError, NotFoundError, ValidationError } from "../../shared/errors/AppError";
@@ -125,6 +126,14 @@ export const weekService = {
       entityType: "Week",
       entityId: id,
       metadata: { reason },
+    });
+
+    await notifyBatchFacilitators(existing.batchId, actor.id, {
+      type: "UNLOCK",
+      title: "Week unlocked",
+      message: `Week ${existing.weekNumber} was unlocked for editing.`,
+      entityType: "Week",
+      entityId: id,
     });
 
     return withProgress(week);

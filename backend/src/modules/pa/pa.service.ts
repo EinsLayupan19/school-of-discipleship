@@ -1,6 +1,7 @@
 import { Program, Role } from "@prisma/client";
 import { paRepository } from "./pa.repository";
 import { createAuditLog } from "../audit/audit.service";
+import { notifyClassFacilitator } from "../notifications/notification.service";
 import { prisma } from "../../config/db";
 import { getFacilitatorClassIds } from "../../shared/utils/facilitatorScope";
 import { ForbiddenError, NotFoundError, ValidationError } from "../../shared/errors/AppError";
@@ -141,6 +142,14 @@ export const paService = {
       entityType: "PAActivity",
       entityId: id,
       metadata: { reason },
+    });
+
+    await notifyClassFacilitator(session.classId, actor.id, {
+      type: "UNLOCK",
+      title: "PA session unlocked",
+      message: `The ${new Date(session.sessionDate).toLocaleDateString()} PA session was unlocked.`,
+      entityType: "PAActivity",
+      entityId: id,
     });
 
     return unlocked;

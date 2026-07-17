@@ -103,6 +103,8 @@ model User {
   gradeOverrides     ActivityScore[] @relation("ScoreOverriddenBy")
   weeksCompleted     Week[]          @relation("WeekCompletedBy")
   attendancesLocked  Attendance[]    @relation("AttendanceLockedBy")
+  notifications      Notification[]
+  announcements      Announcement[]
 
   @@index([role])
   @@map("users")
@@ -519,6 +521,42 @@ model UnlockLog {
 // ─────────────────────────────────────────────────────────
 // SETTINGS
 // ─────────────────────────────────────────────────────────
+
+enum NotificationType {
+  UNLOCK
+  ANNOUNCEMENT
+}
+
+/// Per-user notification (system-generated: unlocks, drop warnings, etc).
+model Notification {
+  id         String           @id @default(uuid())
+  userId     String
+  type       NotificationType
+  title      String
+  message    String
+  entityType String?
+  entityId   String?
+  isRead     Boolean          @default(false)
+  createdAt  DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("notifications")
+}
+
+/// A dashboard announcement posted by a Facilitator or Super Admin.
+model Announcement {
+  id        String   @id @default(uuid())
+  authorId  String
+  title     String
+  body      String
+  createdAt DateTime @default(now())
+
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@map("announcements")
+}
 
 /// System-wide key/value configuration managed by Super Admin (e.g. default
 /// grade category weights, demerit point thresholds). A single flexible

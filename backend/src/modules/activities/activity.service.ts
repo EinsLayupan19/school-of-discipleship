@@ -1,6 +1,7 @@
 import { Role } from "@prisma/client";
 import { activityRepository } from "./activity.repository";
 import { createAuditLog } from "../audit/audit.service";
+import { notifyClassFacilitator } from "../notifications/notification.service";
 import { prisma } from "../../config/db";
 import { getFacilitatorClassIds } from "../../shared/utils/facilitatorScope";
 import { ForbiddenError, NotFoundError, ValidationError } from "../../shared/errors/AppError";
@@ -160,6 +161,14 @@ export const activityService = {
       entityType: "Activity",
       entityId: id,
       metadata: { reason },
+    });
+
+    await notifyClassFacilitator(existing.classId, actor.id, {
+      type: "UNLOCK",
+      title: "Activity unlocked",
+      message: `"${existing.title}" was unlocked for editing.`,
+      entityType: "Activity",
+      entityId: id,
     });
 
     return activity;

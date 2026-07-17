@@ -103,3 +103,4 @@ project → Authentication → URL Configuration, and add
 `http://localhost:5173/reset-password` to the Redirect URLs allow list
 (the actual reset-password page is built in a later phase alongside the
 Dashboard).
+y
