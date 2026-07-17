@@ -10,6 +10,7 @@ import {
   FileText,
   LayoutGrid,
   BarChart3,
+  FileDown,
   X,
   type LucideIcon,
 } from "lucide-react";
@@ -35,6 +36,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Activities", href: "/activities", icon: FileText },
   { label: "Physical Arrangement", href: "/pa", icon: LayoutGrid },
   { label: "Analytics", href: "/analytics", icon: BarChart3 },
+  { label: "Reports", href: "/reports", icon: FileDown },
   { label: "Users", href: "/users", icon: Users, roles: ["SUPER_ADMIN"] },
   { label: "Audit Logs", href: "/audit-logs", icon: ScrollText, roles: ["SUPER_ADMIN"] },
   { label: "Settings", href: "/settings", icon: Settings, roles: ["SUPER_ADMIN"] },

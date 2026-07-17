@@ -12,6 +12,7 @@ import paRoutes from "../modules/pa/pa.routes";
 import notificationRoutes from "../modules/notifications/notification.routes";
 import announcementRoutes from "../modules/announcements/announcement.routes";
 import dashboardRoutes from "../modules/dashboard/dashboard.routes";
+import reportsRoutes from "../modules/reports/reports.routes";
 
 /**
  * Root API router. Each module (users, auth, audit, etc.) will
@@ -33,5 +34,6 @@ router.use("/pa", paRoutes);
 router.use("/notifications", notificationRoutes);
 router.use("/announcements", announcementRoutes);
 router.use("/dashboard", dashboardRoutes);
+router.use("/reports", reportsRoutes);
 
 export default router;
