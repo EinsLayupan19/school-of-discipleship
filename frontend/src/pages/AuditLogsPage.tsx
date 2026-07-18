@@ -78,6 +78,13 @@ export default function AuditLogsPage() {
           <SelectContent>
             <SelectItem value="all">All entities</SelectItem>
             <SelectItem value="User">User</SelectItem>
+            <SelectItem value="Student">Student</SelectItem>
+            <SelectItem value="Attendance">Attendance</SelectItem>
+            <SelectItem value="Activity">Activity</SelectItem>
+            <SelectItem value="PAActivity">PA</SelectItem>
+            <SelectItem value="Week">Week</SelectItem>
+            <SelectItem value="GroupChip">Group Chip</SelectItem>
+            <SelectItem value="Announcement">Announcement</SelectItem>
           </SelectContent>
         </Select>
 

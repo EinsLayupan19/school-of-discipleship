@@ -5,6 +5,7 @@ import {
   Users,
   Settings,
   ScrollText,
+  ShieldCheck,
   CalendarClock,
   ClipboardCheck,
   FileText,
@@ -39,6 +40,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Reports", href: "/reports", icon: FileDown },
   { label: "Users", href: "/users", icon: Users, roles: ["SUPER_ADMIN"] },
   { label: "Audit Logs", href: "/audit-logs", icon: ScrollText, roles: ["SUPER_ADMIN"] },
+  { label: "Security", href: "/security", icon: ShieldCheck, roles: ["SUPER_ADMIN"] },
   { label: "Settings", href: "/settings", icon: Settings, roles: ["SUPER_ADMIN"] },
 ];
 

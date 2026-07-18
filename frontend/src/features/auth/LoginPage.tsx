@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Link, useNavigate } from "react-router-dom";
+import { apiFetch } from "@/lib/apiClient";
 import { supabase } from "@/lib/supabaseClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,6 +35,8 @@ export default function LoginPage() {
       setServerError(error.message);
       return;
     }
+
+    apiFetch("/auth/login-event", { method: "POST" }).catch(() => undefined);
 
     // Requirement: after login, always land on the Dashboard (not built yet in Phase 3).
     navigate("/dashboard", { replace: true });
