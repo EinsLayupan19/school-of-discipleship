@@ -14,6 +14,7 @@ import announcementRoutes from "../modules/announcements/announcement.routes";
 import dashboardRoutes from "../modules/dashboard/dashboard.routes";
 import reportsRoutes from "../modules/reports/reports.routes";
 import chipsRoutes from "../modules/chips/chips.routes";
+import securityRoutes from "../modules/security/security.routes";
 
 /**
  * Root API router. Each module (users, auth, audit, etc.) will
@@ -37,5 +38,6 @@ router.use("/announcements", announcementRoutes);
 router.use("/dashboard", dashboardRoutes);
 router.use("/reports", reportsRoutes);
 router.use("/chips", chipsRoutes);
+router.use("/security", securityRoutes);
 
 export default router;

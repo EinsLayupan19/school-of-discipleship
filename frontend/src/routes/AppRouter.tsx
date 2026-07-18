@@ -5,6 +5,7 @@ import { ProtectedRoute } from "./ProtectedRoute";
 import DashboardPlaceholder from "@/pages/DashboardPlaceholder";
 import UsersPage from "@/pages/UsersPage";
 import AuditLogsPage from "@/pages/AuditLogsPage";
+import SecurityPage from "@/pages/SecurityPage";
 import MdcPage from "@/pages/MdcPage";
 import CcPage from "@/pages/CcPage";
 import StudentProfilePage from "@/pages/StudentProfilePage";
@@ -39,6 +40,7 @@ const router = createBrowserRouter([
     children: [
       { path: "/users", element: <UsersPage /> },
       { path: "/audit-logs", element: <AuditLogsPage /> },
+      { path: "/security", element: <SecurityPage /> },
     ],
   },
 

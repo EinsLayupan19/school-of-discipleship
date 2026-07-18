@@ -29,6 +29,8 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
  *  2. Fetching our own backend's /auth/me once a session exists, to get
  *     the role-bearing profile Supabase itself doesn't know about
  */
+const IDLE_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [sessionResolved, setSessionResolved] = useState(false);
@@ -58,6 +60,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   async function signOut() {
     await supabase.auth.signOut();
   }
+
+  // Session timeout: auto sign-out after IDLE_TIMEOUT_MS of no interaction.
+  useEffect(() => {
+    if (!session) return;
+    let timer: ReturnType<typeof setTimeout>;
+    const reset = () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        signOut();
+      }, IDLE_TIMEOUT_MS);
+    };
+    const events = ["mousedown", "keydown", "scroll", "touchstart"];
+    events.forEach((e) => window.addEventListener(e, reset));
+    reset();
+    return () => {
+      clearTimeout(timer);
+      events.forEach((e) => window.removeEventListener(e, reset));
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session]);
 
   const isLoading = !sessionResolved || (!!session && profileLoading);
 

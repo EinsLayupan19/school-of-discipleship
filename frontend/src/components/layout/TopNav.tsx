@@ -1,4 +1,5 @@
-import { Menu, LogOut, User as UserIcon } from "lucide-react";
+import { Menu, LogOut, User as UserIcon, KeyRound } from "lucide-react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -11,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ThemeToggle } from "./ThemeToggle";
 import { NotificationBell } from "@/features/notifications/NotificationBell";
+import { ChangePasswordDialog } from "@/features/auth/ChangePasswordDialog";
 import { useAuth } from "@/features/auth/AuthContext";
 
 interface TopNavProps {
@@ -30,6 +32,7 @@ function initials(name: string) {
 
 export function TopNav({ onMenuClick, title }: TopNavProps) {
   const { profile, signOut } = useAuth();
+  const [pwOpen, setPwOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -68,6 +71,10 @@ export function TopNav({ onMenuClick, title }: TopNavProps) {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => setPwOpen(true)} className="cursor-pointer">
+              <KeyRound className="mr-2 h-4 w-4" />
+              Change password
+            </DropdownMenuItem>
             <DropdownMenuItem
               onClick={signOut}
               className="cursor-pointer text-destructive focus:text-destructive"
@@ -78,6 +85,8 @@ export function TopNav({ onMenuClick, title }: TopNavProps) {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+
+      <ChangePasswordDialog open={pwOpen} onOpenChange={setPwOpen} />
     </header>
   );
 }
