@@ -1,25 +1,34 @@
+import { lazy, Suspense } from "react";
 import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
 import LoginPage from "@/features/auth/LoginPage";
 import ForgotPasswordPage from "@/features/auth/ForgotPasswordPage";
 import { ProtectedRoute } from "./ProtectedRoute";
-import DashboardPlaceholder from "@/pages/DashboardPlaceholder";
-import UsersPage from "@/pages/UsersPage";
-import AuditLogsPage from "@/pages/AuditLogsPage";
-import SecurityPage from "@/pages/SecurityPage";
-import MdcPage from "@/pages/MdcPage";
-import CcPage from "@/pages/CcPage";
-import StudentProfilePage from "@/pages/StudentProfilePage";
-import WeeksPage from "@/pages/WeeksPage";
-import AttendancePage from "@/pages/AttendancePage";
-import AttendanceSessionPage from "@/pages/AttendanceSessionPage";
-import ActivitiesPage from "@/pages/ActivitiesPage";
-import ActivityDetailPage from "@/pages/ActivityDetailPage";
-import PAPage from "@/pages/PAPage";
-import PADetailPage from "@/pages/PADetailPage";
-import AnalyticsPage from "@/pages/AnalyticsPage";
-import ReportsPage from "@/pages/ReportsPage";
 import UnauthorizedPage from "@/pages/UnauthorizedPage";
 import NotFoundPage from "@/pages/NotFoundPage";
+import { RouteLoading } from "@/components/layout/RouteLoading";
+
+// Everything past login is code-split — keeps the initial bundle small,
+// since most users only ever touch a handful of these pages per session.
+const DashboardPlaceholder = lazy(() => import("@/pages/DashboardPlaceholder"));
+const UsersPage = lazy(() => import("@/pages/UsersPage"));
+const AuditLogsPage = lazy(() => import("@/pages/AuditLogsPage"));
+const SecurityPage = lazy(() => import("@/pages/SecurityPage"));
+const MdcPage = lazy(() => import("@/pages/MdcPage"));
+const CcPage = lazy(() => import("@/pages/CcPage"));
+const StudentProfilePage = lazy(() => import("@/pages/StudentProfilePage"));
+const WeeksPage = lazy(() => import("@/pages/WeeksPage"));
+const AttendancePage = lazy(() => import("@/pages/AttendancePage"));
+const AttendanceSessionPage = lazy(() => import("@/pages/AttendanceSessionPage"));
+const ActivitiesPage = lazy(() => import("@/pages/ActivitiesPage"));
+const ActivityDetailPage = lazy(() => import("@/pages/ActivityDetailPage"));
+const PAPage = lazy(() => import("@/pages/PAPage"));
+const PADetailPage = lazy(() => import("@/pages/PADetailPage"));
+const AnalyticsPage = lazy(() => import("@/pages/AnalyticsPage"));
+const ReportsPage = lazy(() => import("@/pages/ReportsPage"));
+
+function withSuspense(element: React.ReactNode) {
+  return <Suspense fallback={<RouteLoading />}>{element}</Suspense>;
+}
 
 const router = createBrowserRouter([
   { path: "/login", element: <LoginPage /> },
@@ -31,42 +40,42 @@ const router = createBrowserRouter([
     // every role lands on after login. Role-specific *content* within
     // it is a later-phase concern.
     element: <ProtectedRoute allowedRoles={["SUPER_ADMIN", "MDC_FACILITATOR", "CC_FACILITATOR"]} />,
-    children: [{ path: "/dashboard", element: <DashboardPlaceholder /> }],
+    children: [{ path: "/dashboard", element: withSuspense(<DashboardPlaceholder />) }],
   },
 
   {
     // User management and the audit trail are Super Admin only.
     element: <ProtectedRoute allowedRoles={["SUPER_ADMIN"]} />,
     children: [
-      { path: "/users", element: <UsersPage /> },
-      { path: "/audit-logs", element: <AuditLogsPage /> },
-      { path: "/security", element: <SecurityPage /> },
+      { path: "/users", element: withSuspense(<UsersPage />) },
+      { path: "/audit-logs", element: withSuspense(<AuditLogsPage />) },
+      { path: "/security", element: withSuspense(<SecurityPage />) },
     ],
   },
 
   {
     element: <ProtectedRoute allowedRoles={["SUPER_ADMIN", "MDC_FACILITATOR"]} />,
-    children: [{ path: "/mdc", element: <MdcPage /> }],
+    children: [{ path: "/mdc", element: withSuspense(<MdcPage />) }],
   },
   {
     element: <ProtectedRoute allowedRoles={["SUPER_ADMIN", "CC_FACILITATOR"]} />,
-    children: [{ path: "/cc", element: <CcPage /> }],
+    children: [{ path: "/cc", element: withSuspense(<CcPage />) }],
   },
   {
     // Individual student profile — accessible to any role that can reach
     // a student list at all; ownership is enforced server-side.
     element: <ProtectedRoute allowedRoles={["SUPER_ADMIN", "MDC_FACILITATOR", "CC_FACILITATOR"]} />,
     children: [
-      { path: "/students/:id", element: <StudentProfilePage /> },
-      { path: "/weeks", element: <WeeksPage /> },
-      { path: "/attendance", element: <AttendancePage /> },
-      { path: "/attendance/:id", element: <AttendanceSessionPage /> },
-      { path: "/activities", element: <ActivitiesPage /> },
-      { path: "/activities/:id", element: <ActivityDetailPage /> },
-      { path: "/pa", element: <PAPage /> },
-      { path: "/pa/:id", element: <PADetailPage /> },
-      { path: "/analytics", element: <AnalyticsPage /> },
-      { path: "/reports", element: <ReportsPage /> },
+      { path: "/students/:id", element: withSuspense(<StudentProfilePage />) },
+      { path: "/weeks", element: withSuspense(<WeeksPage />) },
+      { path: "/attendance", element: withSuspense(<AttendancePage />) },
+      { path: "/attendance/:id", element: withSuspense(<AttendanceSessionPage />) },
+      { path: "/activities", element: withSuspense(<ActivitiesPage />) },
+      { path: "/activities/:id", element: withSuspense(<ActivityDetailPage />) },
+      { path: "/pa", element: withSuspense(<PAPage />) },
+      { path: "/pa/:id", element: withSuspense(<PADetailPage />) },
+      { path: "/analytics", element: withSuspense(<AnalyticsPage />) },
+      { path: "/reports", element: withSuspense(<ReportsPage />) },
     ],
   },
 

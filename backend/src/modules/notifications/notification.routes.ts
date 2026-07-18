@@ -90,14 +90,20 @@ router.get(
         where: { classId: { in: classIds }, isArchived: false, id: { notIn: atRiskIds } },
         select: { id: true, fullName: true },
       });
+      const allRecordsSorted = await prisma.attendanceRecord.findMany({
+        where: { studentId: { in: studentsInClasses.map((s) => s.id) } },
+        orderBy: { attendance: { sessionDate: "desc" } },
+        select: { studentId: true, status: true },
+      });
+      const lastTwoByStudent = new Map<string, string[]>();
+      for (const r of allRecordsSorted) {
+        const list = lastTwoByStudent.get(r.studentId) ?? [];
+        if (list.length < 2) list.push(r.status);
+        lastTwoByStudent.set(r.studentId, list);
+      }
       for (const student of studentsInClasses) {
-        const lastTwo = await prisma.attendanceRecord.findMany({
-          where: { studentId: student.id },
-          orderBy: { attendance: { sessionDate: "desc" } },
-          take: 2,
-          select: { status: true },
-        });
-        if (lastTwo.length === 2 && lastTwo.every((r) => r.status === "ABSENT")) {
+        const lastTwo = lastTwoByStudent.get(student.id) ?? [];
+        if (lastTwo.length === 2 && lastTwo.every((s) => s === "ABSENT")) {
           reminders.push({
             id: `inactive-${student.id}`,
             type: "DROP_WARNING",
