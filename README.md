@@ -1,106 +1,69 @@
 # School of Discipleship — Facilitator Management System
 
-A production web application for managing MDC and CC facilitators, grading, and audit trails.
+A production web application for managing MDC and CC facilitators: students, attendance, grading, Physical Arrangement, weekly tracking, chips, notifications, reports, and full audit accountability.
 
 ## Structure
 
-This is a monorepo with two independently deployable apps:
+Monorepo with two independently deployable apps:
 
 ```
 school-of-discipleship/
 ├── frontend/   # React + Vite + TS + Tailwind + shadcn/ui  → deploys to Vercel
-└── backend/    # Node + Express + TS + Prisma              → deploys to Railway
+├── backend/    # Node + Express + TS + Prisma              → deploys to Railway
+└── docs/       # User/Facilitator/Super Admin/Installation/DB/API/Backup guides, changelog
 ```
 
 ## Roles
-- **Super Admin** — full access to MDC and CC, user management, grading settings, record unlocking, audit logs
-- **MDC Facilitator** — MDC access only
-- **CC Facilitator** — CC access only
-- Students never log in to this system
+- **Super Admin** — full access to MDC and CC, user management, unlocking, security, backups
+- **MDC Facilitator** / **CC Facilitator** — scoped to their own assigned classes only
+- Students never log in
 
-## Local Setup (Phase 1 status)
+## Local Setup
 
 ### Backend
 ```bash
 cd backend
-cp .env.example .env   # fill in Supabase + DB credentials
+cp .env.example .env   # DATABASE_URL, DIRECT_URL, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
 npm install
+npx prisma migrate dev
+npx prisma db seed      # creates the first Super Admin (prints credentials)
 npm run dev             # http://localhost:4000/api/health
 ```
 
 ### Frontend
 ```bash
 cd frontend
-cp .env.example .env
+cp .env.example .env   # VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, VITE_API_BASE_URL
 npm install
 npm run dev              # http://localhost:5173
 ```
 
+Also add `http://localhost:5173/reset-password` to Supabase → Authentication → URL Configuration → Redirect URLs (needed for the forgot-password flow).
+
+## API routes
+`/auth` `/users` `/audit-logs` `/students` `/academic` `/weeks` `/attendance` `/activities` `/pa` `/chips` `/notifications` `/announcements` `/dashboard` `/reports` `/security` — full detail in `docs/api-documentation.md`.
+
+## Documentation
+See `docs/`: User Manual, Facilitator Guide, Super Admin Guide, Installation Guide, Database Documentation, API Documentation, Backup & Recovery Guide, Change Log, Deployment Guide.
+
 ## Build Phases
 1. ✅ Project scaffolding
-2. ✅ Database schema (Prisma) + Supabase connection
-3. ✅ Authentication (Supabase Auth + role guards)
-4. ✅ Application layout (sidebar, top nav, dark mode, dashboard cards, error pages)
-5. ✅ User Management (Super Admin: create/edit/deactivate/reset-password + audit logs)
-6. ✅ Student Management (Excel import, CRUD, archive, search/filter/pagination, profile page)
-7. Grading settings + record unlocking
-8. Audit logging refinements (per-module actions)
-9. Deployment (Vercel + Railway)
+2. ✅ Database schema + Supabase connection
+3. ✅ Authentication (Supabase Auth, JWKS verification, role guards)
+4. ✅ Application layout (sidebar, top nav, dark mode, error pages)
+5. ✅ User Management
+6. ✅ Student Management (Excel import, CRUD, archive)
+7. ✅ Week Manager
+8. ✅ Attendance Module
+9. ✅ Activity Module (Quiz/Assignment/Performance/Recitation)
+10. ✅ Physical Arrangement Module (per-group rubric grading)
+11. ✅ Notifications & Announcements
+12. ✅ Dashboard & Analytics
+13. ✅ Reports & Exporting (CSV/Excel/PDF)
+14. ✅ Chips module + inactivity notifications
+15. ✅ Security (login history, password change, session timeout, unlock logs, backup export)
+16. ✅ Optimization (code-splitting, error boundary)
+17. ✅ Deployment & documentation
 
-## Phase 6 — Student Management
-
-Schema changes require a new migration:
-
-```bash
-cd backend
-npx prisma migrate dev --name add_student_fields
-```
-
-This also re-runs cleanly with the seed script, which now additionally
-creates one sample Batch + Class + Group per program (MDC, CC) — facilitated
-by your Super Admin account for now, since Batch/Class/Group management UI
-doesn't exist yet (a later phase). Run it if you want sample data to test
-against immediately:
-
-```bash
-npx prisma db seed
-```
-
-**Access rules**: Super Admin sees all students in both programs. MDC/CC
-Facilitators only see students in classes they personally facilitate — not
-just their program broadly. Only Super Admin can permanently delete a
-student (facilitators can Archive, which is reversible and preserves all
-records).
-
-**Excel import** expects a spreadsheet with these column headers (case
-insensitive): `Full Name`, `Sex`, `Category`, `Class`, and optionally
-`Group` and `Batch` (Batch is only needed if two classes share the same
-name). Rows with errors are skipped individually — the import doesn't
-fail the whole file over one bad row.
-
-Student data lives under **MDC** and **CC** in the sidebar — each shows
-only that program's students.
-
-## Phase 3 — Testing authentication
-
-You need at least one real account to test login against. Seed a Super Admin:
-
-```bash
-cd backend
-npx prisma db seed
-```
-
-This creates a Super Admin in both Supabase Auth and the `users` table, using
-`SEED_SUPER_ADMIN_EMAIL` / `SEED_SUPER_ADMIN_PASSWORD` from your `.env`
-(defaults to `admin@schoolofdiscipleship.local` / `ChangeMe123!` if unset).
-
-Then start both servers (`npm run dev` in `backend/`, `npm run dev` in
-`frontend/`) and log in at `http://localhost:5173/login` with those
-credentials — you should land on the Dashboard placeholder.
-
-**Forgot password** needs one manual Supabase setting: go to your Supabase
-project → Authentication → URL Configuration, and add
-`http://localhost:5173/reset-password` to the Redirect URLs allow list
-(the actual reset-password page is built in a later phase alongside the
-Dashboard).
-y
+## Deploying
+See `docs/deployment-guide.md` — frontend to Vercel, backend to Railway, database on Supabase.
