@@ -25,6 +25,7 @@ import { useBatchesQuery, useClassesQuery } from "@/features/academic/hooks";
 import type { Program } from "@/features/academic/api";
 import { usePASessionsQuery } from "@/features/pa/hooks";
 import { NewPASessionDialog } from "@/features/pa/NewPASessionDialog";
+import { ChipsWidget } from "@/features/chips/ChipsWidget";
 
 const PROGRAMS: { value: Program; label: string }[] = [
   { value: "MDC", label: "MDC" },
@@ -120,55 +121,58 @@ export default function PAPage() {
         {!classId ? (
           <p className="text-sm text-muted-foreground">Select a batch and class.</p>
         ) : (
-          <div className="rounded-lg border border-border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Topic</TableHead>
-                  <TableHead>Groups Scored</TableHead>
-                  <TableHead>Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {isLoading ? (
+          <>
+            <ChipsWidget classId={classId} />
+            <div className="rounded-lg border border-border">
+              <Table>
+                <TableHeader>
                   <TableRow>
-                    <TableCell colSpan={4}>
-                      <Skeleton className="h-6 w-full" />
-                    </TableCell>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Topic</TableHead>
+                    <TableHead>Groups Scored</TableHead>
+                    <TableHead>Status</TableHead>
                   </TableRow>
-                ) : !sessions || sessions.length === 0 ? (
-                  <TableRow>
-                    <TableCell
-                      colSpan={4}
-                      className="py-10 text-center text-sm text-muted-foreground"
-                    >
-                      No sessions yet.
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  sessions.map((s) => (
-                    <TableRow
-                      key={s.id}
-                      className="cursor-pointer"
-                      onClick={() => navigate(`/pa/${s.id}`)}
-                    >
-                      <TableCell className="font-medium text-foreground">
-                        {new Date(s.sessionDate).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell className="text-muted-foreground">{s.topic ?? "—"}</TableCell>
-                      <TableCell className="text-muted-foreground">{s.scores.length}</TableCell>
-                      <TableCell>
-                        <Badge variant={s.isLocked ? "success" : "outline"}>
-                          {s.isLocked ? "Submitted" : "Draft"}
-                        </Badge>
+                </TableHeader>
+                <TableBody>
+                  {isLoading ? (
+                    <TableRow>
+                      <TableCell colSpan={4}>
+                        <Skeleton className="h-6 w-full" />
                       </TableCell>
                     </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
+                  ) : !sessions || sessions.length === 0 ? (
+                    <TableRow>
+                      <TableCell
+                        colSpan={4}
+                        className="py-10 text-center text-sm text-muted-foreground"
+                      >
+                        No sessions yet.
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    sessions.map((s) => (
+                      <TableRow
+                        key={s.id}
+                        className="cursor-pointer"
+                        onClick={() => navigate(`/pa/${s.id}`)}
+                      >
+                        <TableCell className="font-medium text-foreground">
+                          {new Date(s.sessionDate).toLocaleDateString()}
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">{s.topic ?? "—"}</TableCell>
+                        <TableCell className="text-muted-foreground">{s.scores.length}</TableCell>
+                        <TableCell>
+                          <Badge variant={s.isLocked ? "success" : "outline"}>
+                            {s.isLocked ? "Submitted" : "Draft"}
+                          </Badge>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </>
         )}
       </div>
 

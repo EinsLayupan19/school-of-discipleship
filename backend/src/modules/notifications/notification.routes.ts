@@ -85,6 +85,29 @@ router.get(
         );
       }
 
+      // Inactivity: student's last 2 recorded sessions were both ABSENT (and not already flagged as a drop warning).
+      const studentsInClasses = await prisma.student.findMany({
+        where: { classId: { in: classIds }, isArchived: false, id: { notIn: atRiskIds } },
+        select: { id: true, fullName: true },
+      });
+      for (const student of studentsInClasses) {
+        const lastTwo = await prisma.attendanceRecord.findMany({
+          where: { studentId: student.id },
+          orderBy: { attendance: { sessionDate: "desc" } },
+          take: 2,
+          select: { status: true },
+        });
+        if (lastTwo.length === 2 && lastTwo.every((r) => r.status === "ABSENT")) {
+          reminders.push({
+            id: `inactive-${student.id}`,
+            type: "DROP_WARNING",
+            title: "Student inactive",
+            message: `${student.fullName} missed the last 2 sessions.`,
+            createdAt: new Date().toISOString(),
+          });
+        }
+      }
+
       // Pending actions: unsubmitted (draft) sessions.
       const [draftAttendance, draftActivities, draftPA] = await Promise.all([
         prisma.attendance.findMany({
